@@ -1,0 +1,4 @@
+*.exe
+
+# Folder for DLL files created by PyInstaller
+_internal/
