@@ -1,4 +1,9 @@
 *.exe
+*.spec
+.venv/
+__pycache__/
+build/
+dist/
 
 # Folder for DLL files created by PyInstaller
 _internal/

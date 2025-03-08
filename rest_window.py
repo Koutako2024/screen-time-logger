@@ -2,6 +2,7 @@ import logging
 from subprocess import run as subprocess_run
 import tkinter as tk
 from typing import Final
+from plyer import notification
 
 # set up logging
 logger: logging.Logger = logging.getLogger("rest_window logger")
@@ -10,32 +11,26 @@ logger.addHandler(logging.StreamHandler())
 
 MSEC_IN_A_SEC: Final[int] = 1000
 
-running_count_down_call: str | None = None
-
-
-def call_count_down_rest_time(count_label: tk.Label, rest_seconds: int) -> str:
-    "Helper function. Make label to call after."
-    afters_id: str = count_label.after(
-        MSEC_IN_A_SEC, count_down_rest_time, count_label, rest_seconds
-    )
-    return afters_id
+running_count_down_id: str | None = None
 
 
 def count_down_rest_time(count_label: tk.Label, rest_seconds: int) -> None:
-    global running_count_down_call
+    global running_count_down_id
 
-    # Cancel now counting down
-    if running_count_down_call is not None:
-        count_label.after_cancel(running_count_down_call)
+    # Cancel current counting down
+    if running_count_down_id is not None:
+        count_label.after_cancel(running_count_down_id)
 
     count_label["text"] = str(rest_seconds)
     count_label.update()
 
     if rest_seconds > 0:
         rest_seconds -= 1
-        running_count_down_call = call_count_down_rest_time(count_label, rest_seconds)
+        running_count_down_id = count_label.after(
+            MSEC_IN_A_SEC, count_down_rest_time, count_label, rest_seconds
+        )
     else:
-        running_count_down_call = None
+        running_count_down_id = None
 
 
 def open_rest_link() -> None:
@@ -65,7 +60,14 @@ def main() -> None:
     count_button.grid(row=1, column=0)
     open_link_button.grid(row=1, column=1)
 
-    # run
+    # notify
+    notification.notify(
+        title="目を休める時間やで！",
+        message="30分たった！はよ目を休めんかい！",
+        app_name="Screen Time Logger",
+    )  # type: ignore
+
+    # start tk loop
     rest_master.mainloop()
 
 

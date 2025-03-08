@@ -2,11 +2,10 @@ import logging
 from subprocess import run as subprocess_run
 import tkinter as tk
 from typing import Final
-from notification_putter import put_notification
 
 # set up logging
 logger: logging.Logger = logging.getLogger("main logger")
-logger.setLevel("info".upper())
+logger.setLevel("warn".upper())
 logger.addHandler(logging.StreamHandler())
 
 MSEC_IN_A_MIN: Final[int] = 60 * 1000
@@ -14,8 +13,8 @@ MIN_IN_A_HOUR: Final[int] = 60
 
 do_count: bool = True
 
-# To debug
-make_fast_to_debug: bool = False
+# for debug
+make_fast_to_debug: bool = True  # False
 
 
 def call_work_in_tk(
@@ -27,10 +26,7 @@ def call_work_in_tk(
     "Helper function. Make label to call after with parameters."
 
     # for debug
-    if make_fast_to_debug:
-        wait_ms: int = 1000
-    else:
-        wait_ms: int = MSEC_IN_A_MIN
+    wait_ms: int = 1000 if make_fast_to_debug else MSEC_IN_A_MIN
 
     count_label.after(
         wait_ms,
@@ -135,7 +131,6 @@ def work_in_tk(
 
     # It's time to rest!
     if counting_minutes % minutes_by_rest == 0:
-        put_notification()
         run_rest_window_process()
 
     # loop with recursively calling
