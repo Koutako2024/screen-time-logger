@@ -1,7 +1,9 @@
 import logging
 from subprocess import run as subprocess_run
+import threading
 import tkinter as tk
 from typing import Final
+from plyer import notification
 
 # set up logging
 logger: logging.Logger = logging.getLogger("main logger")
@@ -13,8 +15,34 @@ MIN_IN_A_HOUR: Final[int] = 60
 
 do_count: bool = True
 
+
 # for debug
 make_fast_to_debug: bool = True  # False
+
+
+class RestWindowThreadManager:
+    thread: threading.Thread = threading.Thread()
+
+    def launch_rest_window(self) -> bool:
+        "Return: whether the new thread could start or not."
+        is_alive: bool = self.thread.is_alive()
+        if is_alive:
+            # notify
+            notification.notify(
+                title="目を休める時間やで！",
+                message="30分たった！はよ目を休めんかい！",
+                app_name="Screen Time Logger",
+            )  # type: ignore
+            return False
+        else:
+            logger.debug("before start new thread.")
+            self.thread = threading.Thread(target=run_rest_window_process)
+            self.thread.start()
+            logger.debug("after start new thread.")
+            return True
+
+
+rest_window_thread_manager: RestWindowThreadManager = RestWindowThreadManager()
 
 
 def call_work_in_tk(
@@ -62,6 +90,7 @@ def display_directory_has_link() -> None:
 
 
 def run_rest_window_process() -> None:
+    "This function **blocks** until user quit the window!."
     subprocess_run("rest_window.exe", shell=False)
     logger.debug("The process has been called.")
 
@@ -131,9 +160,9 @@ def work_in_tk(
 
     # It's time to rest!
     if counting_minutes % minutes_by_rest == 0:
-        run_rest_window_process()
+        rest_window_thread_manager.launch_rest_window()
 
-    # loop with recursively calling
+    # loop with calling next.
     call_work_in_tk(
         count_label,
         format_displaying_time,

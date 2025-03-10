@@ -1,6 +1,5 @@
 # TODO
-* use threading not to freeze the main window.
-* change to, "Pause" to .after_cancel() and "Restart" to .after() again.
+* move RestWindowThreadManager and a new func to notify to util.py.
 * add a property file.
 
 # To convert to Exe
