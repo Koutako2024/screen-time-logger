@@ -1,9 +1,8 @@
 import logging
 from subprocess import run as subprocess_run
-import threading
 import tkinter as tk
 from typing import Final
-from plyer import notification
+from rest_window_manager import RestWindowManager
 
 # set up logging
 logger: logging.Logger = logging.getLogger("main logger")
@@ -14,35 +13,10 @@ MSEC_IN_A_MIN: Final[int] = 60 * 1000
 MIN_IN_A_HOUR: Final[int] = 60
 
 do_count: bool = True
-
+rest_window_manager: RestWindowManager = RestWindowManager()
 
 # for debug
 make_fast_to_debug: bool = True  # False
-
-
-class RestWindowThreadManager:
-    thread: threading.Thread = threading.Thread()
-
-    def launch_rest_window(self) -> bool:
-        "Return: whether the new thread could start or not."
-        is_alive: bool = self.thread.is_alive()
-        if is_alive:
-            # notify
-            notification.notify(
-                title="目を休める時間やで！",
-                message="30分たった！はよ目を休めんかい！",
-                app_name="Screen Time Logger",
-            )  # type: ignore
-            return False
-        else:
-            logger.debug("before start new thread.")
-            self.thread = threading.Thread(target=run_rest_window_process)
-            self.thread.start()
-            logger.debug("after start new thread.")
-            return True
-
-
-rest_window_thread_manager: RestWindowThreadManager = RestWindowThreadManager()
 
 
 def call_work_in_tk(
@@ -81,18 +55,12 @@ def count_up_and_updata_label(
     return counting_minutes
 
 
-def display_directory_has_link() -> None:
+def display_directory_having_link() -> None:
     "Current directory must be this directory."
     subprocess_run(
         "start .",
         shell=True,
     )
-
-
-def run_rest_window_process() -> None:
-    "This function **blocks** until user quit the window!."
-    subprocess_run("rest_window.exe", shell=False)
-    logger.debug("The process has been called.")
 
 
 def main() -> None:
@@ -114,7 +82,7 @@ def main() -> None:
         command=lambda: switch_pause_and_restart_count(pause_button),
     )
     change_link_button: tk.Button = tk.Button(
-        main_root, text="Change link", command=display_directory_has_link
+        main_root, text="Change link", command=display_directory_having_link
     )
 
     pause_button.grid(row=0, column=1)
@@ -160,7 +128,7 @@ def work_in_tk(
 
     # It's time to rest!
     if counting_minutes % minutes_by_rest == 0:
-        rest_window_thread_manager.launch_rest_window()
+        rest_window_manager.launch_rest_window()
 
     # loop with calling next.
     call_work_in_tk(

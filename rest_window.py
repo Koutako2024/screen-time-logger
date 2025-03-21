@@ -2,7 +2,7 @@ import logging
 from subprocess import run as subprocess_run
 import tkinter as tk
 from typing import Final
-from plyer import notification
+from rest_window_manager import RestWindowManager
 
 # set up logging
 logger: logging.Logger = logging.getLogger("rest_window logger")
@@ -60,12 +60,7 @@ def main() -> None:
     count_button.grid(row=1, column=0)
     open_link_button.grid(row=1, column=1)
 
-    # notify
-    notification.notify(
-        title="目を休める時間やで！",
-        message="30分たった！はよ目を休めんかい！",
-        app_name="Screen Time Logger",
-    )  # type: ignore
+    RestWindowManager.notify_rest_time(minutes=30)
 
     # start tk loop
     rest_master.mainloop()

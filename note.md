@@ -1,5 +1,5 @@
 # TODO
-* move RestWindowThreadManager and a new func to notify to util.py.
+* make func to notify after a minute from launching the rest window.
 * add a property file. (in [TOML](https://qiita.com/Magnolia/items/76703179248f17e6b519)?)
   * notification
     * title
