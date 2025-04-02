@@ -16,7 +16,7 @@ do_count: bool = True
 rest_window_manager: RestWindowManager = RestWindowManager()
 
 # for debug
-make_fast_to_debug: bool = True  # False
+make_fast_to_debug: bool = False
 
 
 def call_work_in_tk(
