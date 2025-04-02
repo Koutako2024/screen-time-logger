@@ -40,8 +40,15 @@ def open_rest_link() -> None:
     )
 
 
+def snooze(window: tk.Tk, next_minutes: int = 31) -> None:
+    "This call itself after a minute automatically."
+    RestWindowManager.notify_snooze(next_minutes)
+    window.after(60 * MSEC_IN_A_SEC, snooze, window, next_minutes + 1)
+
+
 def main() -> None:
     # init
+    ## window
     font_size: int = 500
     rest_seconds: int = 30
 
@@ -60,7 +67,11 @@ def main() -> None:
     count_button.grid(row=1, column=0)
     open_link_button.grid(row=1, column=1)
 
+    ## notification
     RestWindowManager.notify_rest_time(minutes=30)
+
+    ## snooze
+    rest_master.after(60 * MSEC_IN_A_SEC, snooze, rest_master, 31)
 
     # start tk loop
     rest_master.mainloop()

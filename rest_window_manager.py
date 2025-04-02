@@ -40,3 +40,11 @@ class RestWindowManager:
             message="{minutes}分たった！はよ目を休めんかい！".format(minutes=minutes),
             app_name="Screen Time Logger",
         )  # type: ignore
+
+    @staticmethod
+    def notify_snooze(minutes: int) -> None:
+        notification.notify(
+            title="はよせい",
+            message="もう{minutes}分たった！観念せんかい！".format(minutes=minutes),
+            app_name="Screen Time Logger",
+        )  # type: ignore
